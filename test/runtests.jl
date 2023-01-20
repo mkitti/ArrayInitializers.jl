@@ -1,6 +1,7 @@
 using ArrayInitializers
 using ArrayInitializers: fill!
 using OffsetArrays
+using Random
 using Test
 
 @testset "ArrayInitializers.jl" begin
@@ -73,4 +74,49 @@ using Test
     D = OffsetMatrix(undeftype(Int), 1:3, 2:5)
     @test size(D) == (3,4)
     @test typeof(D) == OffsetMatrix{Int, Matrix{Int}}
+
+    # RandomTypeInitializer
+    E = Array{Int}(randinit, 3, 5)
+    @test size(E) == (3,5)
+    @test typeof(E) == Matrix{Int}
+
+    F = Array(randinit(Float64), 7, 9)
+    @test size(F) == (7,9)
+    @test typeof(F) == Matrix{Float64}
+
+    # RandomCollectionInitializer
+    G = Array(randinit(1:10), 8, 2)
+    @test size(G) == (8,2)
+    @test typeof(G) == Matrix{Int}
+
+    # SizedArrayInitializer
+    szinit = reshape(fives, 3, 8)
+    H = Array(szinit)
+    @test size(H) == (3,8)
+    @test typeof(H) == Matrix{Int}
+    @test all(==(5), H)
+
+    I = OffsetArray(szinit)
+    @test size(I) == (3,8)
+    @test typeof(I) == OffsetMatrix{Int, Matrix{Int}}
+    @test all(==(5), I)
+
+    offset_sz_init = reshape(randinit(1:10), 2:5, 8:9)
+    J = OffsetArray(offset_sz_init)
+    @test size(J) == (4, 2)
+    @test typeof(I) == OffsetMatrix{Int, Matrix{Int}}
+    @test all(in(1:10), J)
+
+    # RNGArrayInitializer
+    ri = randinit(MersenneTwister(1234), 3:5)
+    K = Array(ri, 2, 3)
+    @test size(K) == (2,3)
+    @test typeof(K) == Matrix{Int}
+    @test all(in(3:5), K)
+
+    ri = randinit(MersenneTwister(1234), Float64)
+    L = Array(ri, 2, 3)
+    @test size(L) == (2,3)
+    @test typeof(L) == Matrix{Float64}
+
 end
