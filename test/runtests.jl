@@ -16,7 +16,7 @@ using Test
     @test typeof(Vector(fives, 9)) == Vector{Int}
     @test Matrix(fives, 3, 6) == Base.fill!(Matrix{Int}(undef, 3, 6), 5)
     @test typeof(Matrix(fives, 3, 6)) == Matrix{Int}
-    @test fives(3, 6, 9) == Base.fill!(Array{Int}(undef, 3, 6, 9))
+    @test fives(3, 6, 9) == Base.fill!(Array{Int}(undef, 3, 6, 9), 5)
     @test typeof(fives(3, 6, 9)) == Array{Int, 3}
 
     @test OffsetArray(fives, 5:9, 2:3) == Base.fill!(OffsetArray{Int}(undef, 5:9, 2:3), 5)
