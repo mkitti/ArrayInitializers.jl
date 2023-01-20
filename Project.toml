@@ -3,11 +3,14 @@ uuid = "0cb05910-bdd0-407c-a038-17c783435242"
 authors = ["Mark Kittisopikul <kittisopikulm@janelia.hhmi.org> and contributors"]
 version = "0.1.0"
 
+[deps]
+
 [compat]
 julia = "1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
 
 [targets]
-test = ["Test"]
+test = ["Test", "OffsetArrays]
