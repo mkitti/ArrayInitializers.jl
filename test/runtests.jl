@@ -119,4 +119,13 @@ using Test
     @test size(L) == (2,3)
     @test typeof(L) == Matrix{Float64}
 
+    gi = geninit(x+y for x in 1:5, y in 6:10)
+    M = Array(gi)
+    @test size(M) == (5,5)
+    @test typeof(M) == Matrix{Int}
+
+    gi = geninit(x+y for x in 1:5, y in 6:10)
+    N = Array{Float64}(gi)
+    @test size(N) == (5,5)
+    @test typeof(N) == Matrix{Float64}
 end

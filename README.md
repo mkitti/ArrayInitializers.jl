@@ -55,4 +55,16 @@ julia> Array(undeftype(Rational), 3, 2)
  #undef  #undef
  #undef  #undef
  #undef  #undef
+
+julia> fives(3, 2)
+3×2 Matrix{Int64}:
+ 5  5
+ 5  5
+ 5  5
+
+julia> fives((3, 2))
+3×2 Matrix{Int64}:
+ 5  5
+ 5  5
+ 5  5
 ```
