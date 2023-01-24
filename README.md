@@ -67,4 +67,20 @@ julia> fives((3, 2))
  5  5
  5  5
  5  5
+
+julia> Array(geninit(x^2 for x in 1:5))
+5-element Vector{Int64}:
+  1
+  4
+  9
+ 16
+ 25
+
+julia> Array{Float64}(geninit(x^2 for x in 1:5))
+5-element Vector{Float64}:
+  1.0
+  4.0
+  9.0
+ 16.0
+ 25.0
 ```
