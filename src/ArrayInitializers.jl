@@ -2,7 +2,7 @@ module ArrayInitializers
 
 using Random
 
-export init, undeftype, zeroinit, oneinit, randinit, geninit
+export init, undeftype, zeroinit, oneinit, randinit, geninit, doinit
 
 const NArray{N} = Array{T,N} where T
 const NAbstractArray{N} = AbstractArray{T,N} where T
@@ -360,6 +360,27 @@ function (::Type{A})(gi::GeneratorInitializer{T}, dims...) where {T, A <: Abstra
 end
 function (::Type{A})(gi::GeneratorInitializer, dims...) where {T, A <: AbstractArray{T}}
     A(collect(T, gi.gen), dims)
+end
+
+struct DoInitializer{T} <: AbstractArrayInitializer{T}
+end
+
+doinit() = DoInitializer{Any}()
+doinit(T) = DoInitializer{T}()
+
+function (::Type{Array})(f::Function, ::DoInitializer{T}, dims...) where T
+    A = Array{T}(undef, dims...)
+    for ci in CartesianIndices(A)
+        A[ci] = f(ci)
+    end
+    A
+end
+function (::Type{Array{T}})(f::Function, ::DoInitializer, dims...) where T
+    A = Array{T}(undef, dims...)
+    for ci in CartesianIndices(A)
+        A[ci] = f(ci)
+    end
+    A
 end
 
 
