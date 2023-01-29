@@ -2,7 +2,7 @@ module ArrayInitializers
 
 using Random
 
-export init, undeftype, zeroinit, oneinit, randinit
+export init, undeftype, zeroinit, oneinit, randinit, geninit, doinit
 
 const NArray{N} = Array{T,N} where T
 const NAbstractArray{N} = AbstractArray{T,N} where T
@@ -335,5 +335,53 @@ Base.reshape(aai::AbstractArrayInitializer{T}, dims) where T = SizedArrayInitial
 Base.reshape(aai::AbstractArrayInitializer{T}, dims...) where T = SizedArrayInitializer(aai, dims)
 
 @inline (::Type{A})(si::SizedArrayInitializer) where {A <: AbstractArray} = A(si.initializer, si.dims...)
+@inline (::Type{A})(si::SizedArrayInitializer, dims...) where {A <: AbstractArray} = A(si.initializer, dims...)
+
+struct GeneratorInitializer{T, G <: Base.Generator} <: AbstractArrayInitializer{T}
+    gen::G
+end
+
+function geninit(gen::Base.Generator)
+    gi = GeneratorInitializer{eltype(first(gen)), typeof(gen)}(gen)
+    if applicable(size, gi.gen.iter)
+        gi = SizedArrayInitializer(gi, size(gi.gen))
+    end
+    return gi
+end
+
+function (::Type{Array})(gi::GeneratorInitializer{T}, dims...) where T
+    reshape(collect(T, gi.gen), dims)
+end
+function (::Type{Array{T}})(gi::GeneratorInitializer, dims...) where T
+    reshape(collect(T, gi.gen), dims)
+end
+function (::Type{A})(gi::GeneratorInitializer{T}, dims...) where {T, A <: AbstractArray}
+    A(collect(T, gi.gen), dims)
+end
+function (::Type{A})(gi::GeneratorInitializer, dims...) where {T, A <: AbstractArray{T}}
+    A(collect(T, gi.gen), dims)
+end
+
+struct DoInitializer{T} <: AbstractArrayInitializer{T}
+end
+
+doinit() = DoInitializer{Any}()
+doinit(T) = DoInitializer{T}()
+
+function (::Type{Array})(f::Function, ::DoInitializer{T}, dims...) where T
+    A = Array{T}(undef, dims...)
+    for ci in CartesianIndices(A)
+        A[ci] = f(ci)
+    end
+    A
+end
+function (::Type{Array{T}})(f::Function, ::DoInitializer, dims...) where T
+    A = Array{T}(undef, dims...)
+    for ci in CartesianIndices(A)
+        A[ci] = f(ci)
+    end
+    A
+end
+
 
 end
