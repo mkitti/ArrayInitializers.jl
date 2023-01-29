@@ -54,7 +54,7 @@ julia> fives!(ones(3))
 init(value::T) where T = FillArrayInitializer{T}(value)
 @inline (fai::FillArrayInitializer)(array) = Base.fill!(array, fai.value)
 @inline (fai::FillArrayInitializer{T})(dims::Dims{N}) where {T,N} = Base.fill!(Array{T,N}(undef, dims), fai.value)
-@inline (fai::FillArrayInitializer{T})(dims::Vararg{<: Integer}) where {T} = Base.fill!(Array{T}(undef, dims), fai.value)
+@inline (fai::FillArrayInitializer{T})(dims::Vararg{Integer}) where {T} = Base.fill!(Array{T}(undef, dims), fai.value)
 
 # Does not override Base.fill!, no type piracy
 """
